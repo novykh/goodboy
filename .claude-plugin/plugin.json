@@ -12,5 +12,10 @@
   "keywords": ["behavior", "bdd", "non-technical", "behavioral-mapping", "accessibility", "gherkin"],
   "skills": "./skills/",
   "hooks": "./hooks/hooks.json",
-  "settings": "./settings.json"
+  "settings": {
+    "goodboy.mode": "strict",
+    "goodboy.autoActivate": false,
+    "goodboy.visualOutput": true,
+    "goodboy.featureFileDir": "docs/behaviors"
+  }
 }
