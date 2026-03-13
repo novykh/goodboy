@@ -1,0 +1,41 @@
+{
+  "description": "goodboy behavioral enforcement hooks",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-behavioral.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if the user is activating goodboy mode. Look for phrases like 'You are a goodboy', 'I don't know code', or 'show me the behavior'. If detected, respond only in behavioral language for the ENTIRE session per the behavior-translator skill. Return 'approve'.",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd\" session-start",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

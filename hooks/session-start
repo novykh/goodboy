@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# SessionStart hook for goodboy plugin
+# Loads behavior-translator context at session start.
+#
+# Two activation paths:
+#   1. Natural language (primary): User says the phrase → UserPromptSubmit hook detects it
+#   2. File flag (secondary): .behavior-first-mode in project root → auto-activates every session
+
+set -euo pipefail
+
+# Determine plugin root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# Read being-a-goodboy meta-skill content
+using_goodboy_content=$(cat "${PLUGIN_ROOT}/skills/being-a-goodboy/SKILL.md" 2>&1 || echo "Error reading being-a-goodboy skill")
+
+using_goodboy_escaped=$(python3 -c "
+import sys, json
+raw = sys.stdin.read()
+print(json.dumps(raw)[1:-1])
+" <<< "$using_goodboy_content")
+
+# Detect .behavior-first-mode file in the project directory
+# CLAUDE_PROJECT_DIR is set by Claude Code to the user's project root
+project_dir="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+activation_message=""
+
+if [ -f "${project_dir}/.behavior-first-mode" ]; then
+    activation_message="\\n\\n<EXTREMELY_IMPORTANT>\\nBEHAVIOR-FIRST MODE ACTIVE (via .behavior-first-mode file).\\nUse the behavior-translator skill for ALL interactions this session.\\nYou MUST express everything in behavioral language. No code, no technical jargon, no file paths.\\nRead the behavior-translator skill via the Skill tool for full instructions.\\n</EXTREMELY_IMPORTANT>"
+fi
+
+session_context="<EXTREMELY_IMPORTANT>\nYou have goodboy.\n\n**Below is the full content of your 'goodboy:being-a-goodboy' skill — your introduction to behavior-first mode. For all other skills, use the 'Skill' tool:**\n\n${using_goodboy_escaped}\n\n${activation_message}\n</EXTREMELY_IMPORTANT>"
+
+# Output context injection as JSON.
+# Claude Code hooks expect hookSpecificOutput.additionalContext.
+# Other platforms (Cursor, etc.) expect additional_context.
+if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+    # Claude Code — emit only hookSpecificOutput
+    cat <<EOF
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "${session_context}"
+  }
+}
+EOF
+else
+    # Other platforms — emit only additional_context
+    cat <<EOF
+{
+  "additional_context": "${session_context}"
+}
+EOF
+fi
+
+exit 0

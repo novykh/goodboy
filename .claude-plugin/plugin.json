@@ -1,0 +1,16 @@
+{
+  "name": "goodboy",
+  "version": "0.1.0",
+  "description": "Behavior-first Claude Code plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
+  "author": {
+    "name": "Johnny Klironomos",
+    "url": "https://github.com/novykh"
+  },
+  "homepage": "https://github.com/novykh/goodboy",
+  "repository": "https://github.com/novykh/goodboy",
+  "license": "MIT",
+  "keywords": ["behavior", "bdd", "non-technical", "behavioral-mapping", "accessibility", "gherkin"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "settings": "./settings.json"
+}

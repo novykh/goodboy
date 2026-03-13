@@ -1,0 +1,20 @@
+{
+  "name": "novykh",
+  "description": "Marketplace for the goodboy behavior-first plugin",
+  "owner": {
+    "name": "Johnny Klironomos",
+    "url": "https://github.com/novykh"
+  },
+  "plugins": [
+    {
+      "name": "goodboy",
+      "description": "Behavior-first Claude Code plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Johnny Klironomos",
+        "url": "https://github.com/novykh"
+      }
+    }
+  ]
+}
