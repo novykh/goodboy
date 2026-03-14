@@ -11,9 +11,19 @@ Exit codes:
   2 — deny (output contains code; agent must rethink behaviorally)
 """
 
+import os
 import re
 import sys
 import json
+
+
+def is_behavior_first_mode() -> bool:
+    return os.path.exists('.behavior-first-mode')
+
+
+def is_markdown_file(tool_input: dict) -> bool:
+    file_path = tool_input.get('file_path', '')
+    return file_path.lower().endswith('.md')
 
 
 def contains_code(content: str) -> bool:
@@ -47,7 +57,10 @@ def main() -> None:
     try:
         hook_input = json.loads(sys.stdin.read())
     except (json.JSONDecodeError, EOFError):
-        # Can't parse input — allow to avoid blocking the agent
+        print(json.dumps({}))
+        sys.exit(0)
+
+    if not is_behavior_first_mode():
         print(json.dumps({}))
         sys.exit(0)
 
@@ -58,21 +71,33 @@ def main() -> None:
         content = tool_input.get('content', '') or tool_input.get('new_string', '')
 
         if contains_code(content) and not is_behavioral(content):
-            # DENY — block the tool use
-            result = {
-                "hookSpecificOutput": {
-                    "permissionDecision": "deny"
-                },
-                "systemMessage": (
-                    "⛔ Output contains code. You must express this in "
-                    "behavioral terms only. Rethink using behavioral mapping: "
-                    "What does the user SEE or EXPERIENCE?"
-                )
-            }
-            print(json.dumps(result))
-            sys.exit(2)
+            if is_markdown_file(tool_input):
+                result = {
+                    "systemMessage": (
+                        "This document contains technical content (code, file paths, "
+                        "or implementation details). You MUST now provide a behavioral "
+                        "translation of this document for the user. Restate everything "
+                        "in behavioral language: what does the user SEE or EXPERIENCE? "
+                        "Use the behavior-translator skill format — word-flow diagrams, "
+                        "no code, no jargon."
+                    )
+                }
+                print(json.dumps(result))
+                sys.exit(0)
+            else:
+                result = {
+                    "hookSpecificOutput": {
+                        "permissionDecision": "deny"
+                    },
+                    "systemMessage": (
+                        "⛔ Output contains code. You must express this in "
+                        "behavioral terms only. Rethink using behavioral mapping: "
+                        "What does the user SEE or EXPERIENCE?"
+                    )
+                }
+                print(json.dumps(result))
+                sys.exit(2)
         else:
-            # ALLOW — output is behavioral
             print(json.dumps({}))
             sys.exit(0)
     else:

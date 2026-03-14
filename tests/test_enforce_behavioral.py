@@ -15,9 +15,12 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 from typing import Tuple
 
 # Path to the hook script under test
@@ -50,6 +53,16 @@ def parse_output(stdout: str) -> dict:
 
 class TestDenyCodeOutput(unittest.TestCase):
     """Hook must DENY (exit 2) when Write/Edit contains code."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.original_dir = os.getcwd()
+        os.chdir(self.tmpdir)
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+
+    def tearDown(self):
+        os.chdir(self.original_dir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
 
     def test_deny_import_statement(self):
         stdout, code = run_hook({
@@ -140,6 +153,16 @@ class TestDenyCodeOutput(unittest.TestCase):
 
 class TestAllowBehavioralOutput(unittest.TestCase):
     """Hook must ALLOW (exit 0) when content uses behavioral language."""
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.original_dir = os.getcwd()
+        os.chdir(self.tmpdir)
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+
+    def tearDown(self):
+        os.chdir(self.original_dir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
 
     def test_allow_user_sees(self):
         stdout, code = run_hook({
@@ -294,15 +317,187 @@ class TestEdgeCases(unittest.TestCase):
         assert code == 0
 
 
+# ── Behavior-first mode gate ──
+
+
+class TestBehaviorFirstModeGate(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.original_dir = os.getcwd()
+
+    def tearDown(self):
+        os.chdir(self.original_dir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_allow_code_when_mode_inactive(self):
+        os.chdir(self.tmpdir)
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "import os\nprint('hello')"}
+        })
+        assert code == 0, f"Expected allow when behavior-first mode inactive, got exit {code}"
+
+    def test_deny_code_when_mode_active(self):
+        os.chdir(self.tmpdir)
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "import os\nprint('hello')"}
+        })
+        assert code == 2, f"Expected deny when behavior-first mode active, got exit {code}"
+
+
+# ── Markdown auto-translate ──
+
+
+class TestMarkdownAutoTranslate(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.original_dir = os.getcwd()
+        os.chdir(self.tmpdir)
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+
+    def tearDown(self):
+        os.chdir(self.original_dir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_allow_markdown_with_code(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": "docs/design.md",
+                "content": "# Design\n```python\nimport os\n```"
+            }
+        })
+        assert code == 0, f"Expected allow for .md with code, got exit {code}"
+
+    def test_inject_translation_message_for_markdown_with_code(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": "docs/design.md",
+                "content": "# Design\n```python\nimport os\n```"
+            }
+        })
+        result = parse_output(stdout)
+        assert "systemMessage" in result, "Expected systemMessage for .md with code"
+        assert "behavioral" in result["systemMessage"].lower()
+
+    def test_no_message_for_markdown_without_code(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": "docs/notes.md",
+                "content": "# Notes\nThe user should see a welcome page."
+            }
+        })
+        assert code == 0
+        result = parse_output(stdout)
+        assert result == {} or "systemMessage" not in result
+
+    def test_still_deny_non_markdown_with_code(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": "src/main.py",
+                "content": "import os\nprint('hello')"
+            }
+        })
+        assert code == 2, "Non-.md files with code should still be denied"
+
+    def test_markdown_case_insensitive(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {
+                "file_path": "docs/DESIGN.MD",
+                "content": "# Design\n```js\nconst x = 1;\n```"
+            }
+        })
+        assert code == 0, "Should detect .MD (uppercase) as markdown"
+
+    def test_edit_tool_markdown_with_code(self):
+        stdout, code = run_hook({
+            "tool_name": "Edit",
+            "tool_input": {
+                "file_path": "docs/spec.md",
+                "new_string": "def process():\n    pass"
+            }
+        })
+        assert code == 0, "Edit on .md with code should be allowed"
+        result = parse_output(stdout)
+        assert "systemMessage" in result
+
+
+# ── Full decision tree integration ──
+
+
+class TestFullDecisionTree(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.original_dir = os.getcwd()
+        os.chdir(self.tmpdir)
+
+    def tearDown(self):
+        os.chdir(self.original_dir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_mode_inactive_allows_everything(self):
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "import os", "file_path": "main.py"}
+        })
+        assert code == 0
+
+    def test_mode_active_md_with_code_allows_with_message(self):
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "```python\nimport os\n```", "file_path": "doc.md"}
+        })
+        assert code == 0
+        result = parse_output(stdout)
+        assert "systemMessage" in result
+
+    def test_mode_active_py_with_code_denies(self):
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "import os", "file_path": "main.py"}
+        })
+        assert code == 2
+
+    def test_mode_active_md_no_code_allows_silently(self):
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "# Just a heading\nSome notes.", "file_path": "notes.md"}
+        })
+        assert code == 0
+        result = parse_output(stdout)
+        assert result == {} or "systemMessage" not in result
+
+    def test_mode_active_behavioral_content_allows(self):
+        Path(os.path.join(self.tmpdir, '.behavior-first-mode')).touch()
+        stdout, code = run_hook({
+            "tool_name": "Write",
+            "tool_input": {"content": "When the user sees the page, the system shows a message."}
+        })
+        assert code == 0
+
+
 # ── Run with unittest if executed directly ──
 
 if __name__ == '__main__':
     import unittest
-    # Collect all test classes
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     for cls in [TestDenyCodeOutput, TestAllowBehavioralOutput,
-                TestAllowNonCommunicationTools, TestEdgeCases]:
+                TestAllowNonCommunicationTools, TestEdgeCases,
+                TestBehaviorFirstModeGate, TestMarkdownAutoTranslate,
+                TestFullDecisionTree]:
         suite.addTests(loader.loadTestsFromTestCase(cls))
 
     runner = unittest.TextTestRunner(verbosity=2)

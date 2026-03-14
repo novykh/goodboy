@@ -94,33 +94,80 @@ Opens automatically in your browser. Dark mode included.
 
 ## Quick Start
 
+### Prerequisites
+
+- Python 3.8+ (for behavioral enforcement hooks)
+- Optional: [Behave](https://behave.readthedocs.io/) or [Cucumber](https://cucumber.io/) for automated test execution
+
 ### Installation
 
-Inside Claude Code, run:
+**Note:** Installation differs by platform. Claude Code and Cursor have built-in plugin marketplaces. Codex, OpenCode, and Gemini CLI require manual setup.
+
+#### Claude Code (Marketplace)
 
 ```bash
 /plugin marketplace add novykh/goodboy
 /plugin install goodboy@novykh
 ```
 
-Done. Start any conversation and say "I don't know code" to activate.
-
-### Prerequisites
-
-- Claude Code v1.0.0+
-- Python 3.8+ (for behavioral enforcement hooks)
-- Optional: [Behave](https://behave.readthedocs.io/) or [Cucumber](https://cucumber.io/) for automated test execution
-
-### CLI Installation
+Or via CLI:
 
 ```bash
 claude plugin marketplace add novykh/goodboy
 claude plugin install goodboy@novykh
 ```
 
+#### Cursor
+
+In Cursor Agent chat:
+
+```text
+/add-plugin goodboy
+```
+
+Or search for "goodboy" in the plugin marketplace.
+
+#### Codex
+
+Tell Codex:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/novykh/goodboy/refs/heads/main/.codex/INSTALL.md
+```
+
+#### OpenCode
+
+Tell OpenCode:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/novykh/goodboy/refs/heads/main/.opencode/INSTALL.md
+```
+
+#### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/novykh/goodboy
+```
+
+To update:
+
+```bash
+gemini extensions update goodboy
+```
+
+### Activate
+
+Start any conversation and say "I don't know code" to activate behavior-first mode.
+
+Or auto-activate for a project:
+
+```bash
+touch .behavior-first-mode   # in your project root
+```
+
 ### Team Installation
 
-Share goodboy with your whole team by installing with project scope:
+Share goodboy with your whole team by installing with project scope (Claude Code):
 
 ```bash
 claude plugin install goodboy@novykh --scope project
@@ -133,12 +180,6 @@ This writes to `.claude/settings.json`, which you commit to version control.
 ```bash
 git clone https://github.com/novykh/goodboy.git
 claude --plugin-dir ./goodboy
-```
-
-### Auto-Activate for a Project
-
-```bash
-touch .behavior-first-mode   # in your project root
 ```
 
 ### Your First Behavioral Conversation
@@ -351,11 +392,13 @@ Enable with: `> Switch to developer mode` during your session.
 - [x] Basic visual output
 - [x] HTML dashboard with Mermaid diagrams
 - [x] Plugin marketplace distribution
+- [x] Slash commands (/goodboy-status, /goodboy-dashboard, /goodboy-activate)
+- [x] Multi-platform support (Claude Code, Cursor, Codex, OpenCode, Gemini CLI)
+- [x] Markdown auto-translate (behavioral translation of docs with code)
 
 ### v0.2 (Next)
 - [ ] Multi-feature reconciliation
 - [ ] Behavioral conflict detection
-- [ ] Slash commands (/goodboy-status, /goodboy-dashboard)
 
 ### v0.3
 - [ ] Team collaboration (multiple stakeholders describing behaviors)

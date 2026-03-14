@@ -1,0 +1,6 @@
+{
+  "name": "goodboy",
+  "description": "Behavior-first plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
+  "version": "0.1.0",
+  "contextFileName": "GEMINI.md"
+}

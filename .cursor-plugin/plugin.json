@@ -1,7 +1,8 @@
 {
   "name": "goodboy",
+  "displayName": "goodboy",
+  "description": "Behavior-first plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
   "version": "0.1.0",
-  "description": "Behavior-first Claude Code plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
   "author": {
     "name": "Johnny Klironomos",
     "url": "https://github.com/novykh"
@@ -13,11 +14,5 @@
   "skills": "./skills/",
   "agents": "./agents/",
   "commands": "./commands/",
-  "hooks": "./hooks/hooks.json",
-  "settings": {
-    "goodboy.mode": "strict",
-    "goodboy.autoActivate": false,
-    "goodboy.visualOutput": true,
-    "goodboy.featureFileDir": "docs/behaviors"
-  }
+  "hooks": "./hooks/hooks.json"
 }
