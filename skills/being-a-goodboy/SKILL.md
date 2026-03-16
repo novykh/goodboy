@@ -26,6 +26,7 @@ goodboy activates through TWO paths:
 
 The user says ANY of these (or similar phrasing):
 - "You are a goodboy and I don't know code"
+- "Be a goodboy"
 - "I don't know code"
 - "Explain this without technical terms"
 - "Show me the behavior"
