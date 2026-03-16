@@ -33,21 +33,17 @@ IF YOU CANNOT EXPRESS SOMETHING BEHAVIORALLY:
 Ask the user to clarify what they expect to see or experience.
 </HARD-GATE>
 
-## Checklist
+## Workflow
 
-You MUST complete these steps in order for every interaction:
+When a user describes a behavior, you MUST create all 3 tasks below using TaskCreate, then chain them with `addBlockedBy` so each phase is gated by the previous one.
 
-1. **Read user input** — understand what they're describing or asking about
-2. **Synthesize** — if input is rambling, off-topic, or mixed with non-behavioral requests, extract the pure behavioral intent
-3. **Create behavioral map** — map trigger → decision points → outcomes → edge cases
-4. **Validate map** — check for gaps, circular logic, dead ends, missing edge cases
-5. **Ask for clarification** — if any gaps remain, ask the user what they expect to *see* or *experience*
-6. **Present word-flow diagram** — show the behavioral map in plain language flow format
-7. **Offer visual output** — offer to open the flow as an interactive HTML diagram in the browser
-8. **Get confirmation** — user confirms the behavioral map is correct
-9. **Accumulate** — append confirmed behavior to `.feature` file
-10. **Run tests silently** — execute Gherkin tests (hidden from user)
-11. **Report status** — "This behavior is working ✓" or "This behavior is failing — here's the gap"
+**Phase 1: Map** — Synthesize the user's input into a complete behavioral map. Extract pure behavioral intent from rambling or mixed input. Map trigger → decision points → outcomes → edge cases. Validate for gaps, circular logic, dead ends. If gaps remain, ask the user what they expect to *see* or *experience*. This phase is complete when the map is valid and has no gaps.
+
+**Phase 2: Confirm** — Present the behavioral map as a word-flow diagram. Offer to open it as an interactive HTML diagram in the browser. Get the user's confirmation. If the user requests changes, revise the map and re-present. This phase is complete when the user confirms. `addBlockedBy: [Phase 1]`
+
+**Phase 3: Save** — Use the Write tool to save the confirmed behavior to `docs/goodboy/behaviors/`. This is NOT optional. See "Feature File Accumulation" below for format and instructions. This phase is complete when the `.feature` file is written to disk. `addBlockedBy: [Phase 2]`
+
+Checklists without TaskCreate tracking = steps get skipped. Every time.
 
 ## Process Flow
 
@@ -60,16 +56,14 @@ digraph behavior_translator {
     "Create behavioral map" [shape=box];
     "Map valid?" [shape=diamond];
     "Fix thinking, retry" [shape=box];
+    "GATE: Map complete" [shape=diamond, style=filled, fillcolor="#fbbf24"];
     "Present word-flow diagram" [shape=box];
     "Offer visual HTML output" [shape=box];
     "User confirms?" [shape=diamond];
     "Revise map" [shape=box];
-    "Append to .feature file" [shape=box];
-    "Run tests (silent)" [shape=box];
-    "Tests pass?" [shape=diamond];
-    "Report: behavior working ✓" [shape=doublecircle];
-    "Report: behavior failing + gap" [shape=doublecircle];
-    "Invoke implementation chain" [shape=box];
+    "GATE: User confirmed" [shape=diamond, style=filled, fillcolor="#fbbf24"];
+    "Save .feature file" [shape=box];
+    "DONE: Behavior saved" [shape=doublecircle];
 
     "User describes behavior" -> "Synthesize input";
     "Synthesize input" -> "Input is behavioral?";
@@ -77,19 +71,17 @@ digraph behavior_translator {
     "Input is behavioral?" -> "Ask: what do you expect to see?" [label="no"];
     "Ask: what do you expect to see?" -> "Synthesize input";
     "Create behavioral map" -> "Map valid?";
-    "Map valid?" -> "Present word-flow diagram" [label="yes"];
+    "Map valid?" -> "GATE: Map complete" [label="yes"];
     "Map valid?" -> "Fix thinking, retry" [label="no"];
     "Fix thinking, retry" -> "Create behavioral map";
+    "GATE: Map complete" -> "Present word-flow diagram";
     "Present word-flow diagram" -> "Offer visual HTML output";
     "Offer visual HTML output" -> "User confirms?";
-    "User confirms?" -> "Append to .feature file" [label="yes"];
+    "User confirms?" -> "GATE: User confirmed" [label="yes"];
     "User confirms?" -> "Revise map" [label="no"];
     "Revise map" -> "Create behavioral map";
-    "Append to .feature file" -> "Run tests (silent)";
-    "Run tests (silent)" -> "Tests pass?";
-    "Tests pass?" -> "Report: behavior working ✓" [label="yes"];
-    "Tests pass?" -> "Report: behavior failing + gap" [label="no"];
-    "Report: behavior failing + gap" -> "Invoke implementation chain";
+    "GATE: User confirmed" -> "Save .feature file";
+    "Save .feature file" -> "DONE: Behavior saved";
 }
 ```
 
@@ -218,7 +210,14 @@ The `<meta http-equiv="refresh" content="3">` tag auto-refreshes the page every 
 
 ## Feature File Accumulation
 
-Confirmed behaviors are saved as Gherkin `.feature` files in `docs/behaviors/`:
+When the user confirms a behavioral map, you MUST save it immediately using the Write tool.
+
+**Where:** `docs/goodboy/behaviors/[topic-slug].feature`
+- Use lowercase, hyphens for spaces (e.g., `subscription-cancellation.feature`)
+- Create `docs/goodboy/behaviors/` directory if it doesn't exist (use Bash: `mkdir -p docs/behaviors`)
+- If the file already exists, use the Edit tool to append the new scenario
+
+**Format:**
 
 ```gherkin
 # Behavioral Spec: [Topic]
@@ -235,6 +234,8 @@ Feature: [Topic in plain language]
     Then [expected outcome]
     And [additional outcome]
 ```
+
+**This is NOT optional.** Every confirmed behavior must be written to a `.feature` file. The enforce-behavioral hook will allow `.feature` files because they contain behavioral markers (Feature:, Scenario:, Given, When, Then).
 
 These files are the **contract** between what the user described and what the system does. They are safe to share with anyone — no technical knowledge needed to read them.
 

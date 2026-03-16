@@ -2,7 +2,7 @@
 """
 Feature File Accumulator
 
-Manages .feature files in the project's docs/behaviors/ directory.
+Manages .feature files in the project's docs/goodboy/behaviors/ directory.
 Creates, appends, and updates Gherkin scenarios as users confirm behaviors
 through the behavior-translator skill.
 

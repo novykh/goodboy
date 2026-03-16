@@ -2,7 +2,7 @@
 
 **Talk to AI agents about behavior, not code.**
 
-goodboy makes AI assistants accessible to non-technical users by enforcing behavioral verification. You describe what should happen, the agent handles everything underneath, and every conversation becomes executable tests.
+goodboy makes AI assistants accessible to non-technical users by enforcing behavioral verification. You describe what should happen, the agent maps it visually, and every confirmed behavior is saved as a spec.
 
 ---
 
@@ -44,12 +44,11 @@ Agent: [Shows you a visual flow diagram]
 
 **What just happened (behind the scenes):**
 1. Agent mapped your description to behavioral flows
-2. Generated executable tests  
-3. Ran them against your actual codebase
-4. Translated technical failures to behavioral gaps
-5. Opened a beautiful HTML page in your browser (no code visible)
+2. Validated the map for gaps and contradictions
+3. Saved the confirmed behavior as a `.feature` spec
+4. Showed you the result visually (no code visible)
 
-**You're writing tests without knowing it.** Every behavior you describe becomes automated verification.
+**You're writing specs without knowing it.** Every behavior you describe becomes a documented, shareable specification.
 
 ---
 
@@ -73,9 +72,7 @@ Before the agent can respond, it must:
 The agent is trained to synthesize sprawling or off-topic responses, discard UI and CSS styling requests (which shouldn't be handled by the behavioral layer), and extract purely actionable behavioral logic.
 
 ### 📝 Living Behavioral Specs
-Every behavior you confirm gets appended to a `.feature` file. Over time you build a complete specification through conversation, without ever editing files directly.
-
-These aren't just docs — they're executable tests running against your code.
+Every behavior you confirm gets saved to a `.feature` file. Over time you build a complete specification through conversation, without ever editing files directly.
 
 ### 🎨 Beautiful Visual Output
 No more wall of text in a terminal. Behaviors are shown as:
@@ -86,18 +83,13 @@ No more wall of text in a terminal. Behaviors are shown as:
 Opens automatically in your browser. Dark mode included.
 
 ### 🔗 Two Tracks, One Codebase
-- When behaviors fail, the agent automatically plans and executes fixes
+- Stakeholders describe behaviors conversationally
 - Developers still have full access to code-level tools
-- **Stakeholders speak behavior, developers write code, everyone's in sync**
+- **The `.feature` specs become the shared language between both sides**
 
 ---
 
 ## Quick Start
-
-### Prerequisites
-
-- Python 3.8+ (for behavioral enforcement hooks)
-- Optional: [Behave](https://behave.readthedocs.io/) or [Cucumber](https://cucumber.io/) for automated test execution
 
 ### Installation
 
@@ -197,20 +189,19 @@ claude
 
 # The agent will:
 # 1. Map the behavior visually
-# 2. Ask clarifying questions if needed  
-# 3. Save to .feature file
-# 4. Test against your code
-# 5. Tell you if it passes or fails (in behavioral terms)
+# 2. Ask clarifying questions if needed
+# 3. Present the map for your confirmation
+# 4. Save to .feature file
 ```
 
 ### Check Your Behavioral Specs
 
 ```bash
 # View all behaviors
-ls docs/behaviors/
+ls docs/goodboy/behaviors/
 
 # Open the dashboard
-open docs/behaviors/dashboard.html
+open docs/goodboy/dashboard.html
 ```
 
 ### Update
@@ -222,7 +213,6 @@ open docs/behaviors/dashboard.html
 ### Troubleshooting
 
 Plugin not loading? Run `/plugin validate goodboy` or `claude --debug`.
-Hooks not firing? Check `python3 --version` and script permissions.
 Agent still showing code? Say "I don't know code" or run `/reload-plugins`.
 
 ---
@@ -236,24 +226,21 @@ User describes behavior
     ↓
 Agent creates behavioral map
     ↓
-[VERIFICATION CHECKPOINT]
-Does the map have gaps? Contradictions? 
+[GATE: Map valid?]
+Does the map have gaps? Contradictions?
     ↓ YES → Fix thinking, retry
     ↓ NO  → Continue
     ↓
 Show visual map to user
     ↓
-User confirms or corrects  
+[GATE: User confirms?]
+User confirms or requests changes
+    ↓ CHANGES → Revise map, re-present
+    ↓ CONFIRMED → Continue
     ↓
-Append to .feature file
+Save to .feature file
     ↓
-Generate Gherkin tests (hidden)
-    ↓
-Run tests silently
-    ↓
-Translate results to behavioral language
-    ↓
-Show user: "passing" or "failing, here's the gap"
+Done — behavior is documented
 ```
 
 ### The Architecture
@@ -265,8 +252,8 @@ Show user: "passing" or "failing, here's the gap"
 
 **Behind the Scenes:**
 - Your conversations happen in behavioral language
-- When behaviors fail, the agent automatically plans and executes fixes
-- You just see: "this behavior is now passing ✓"
+- Every confirmed behavior is saved as a `.feature` spec
+- The specs accumulate into a complete, shareable specification
 
 ---
 
@@ -275,22 +262,22 @@ Show user: "passing" or "failing, here's the gap"
 ### For Product Managers
 "I need to specify how the onboarding flow should work, but I don't want to write Jira tickets that get misinterpreted."
 
-→ Describe the flow conversationally. The agent maps it, you confirm it, now engineering has an executable spec.
+→ Describe the flow conversationally. The agent maps it, you confirm it, now engineering has a clear spec.
 
-### For QA Leads  
-"I want comprehensive test coverage but I don't want to write test code."
+### For QA Leads
+"I want comprehensive scenario coverage but I don't want to write specs manually."
 
-→ Describe scenarios as you think of them. The agent accumulates them into a test suite that runs automatically.
+→ Describe scenarios as you think of them. The agent accumulates them into `.feature` specs that the whole team can read.
 
 ### For Founders
 "I know what I want my product to do, but I can't communicate it to developers without them asking 100 clarifying questions."
 
-→ Talk to the agent. It will ask the clarifying questions, capture your answers as behavioral specs, and verify the implementation matches.
+→ Talk to the agent. It will ask the clarifying questions and capture your answers as behavioral specs that engineering can work from.
 
 ### For Developers
 "I'm tired of stakeholders asking to see the code, then getting confused, then saying 'that's not what I meant.'"
 
-→ Show them the .feature file or the HTML visualizations. They can actually understand it. When they describe new behaviors, the agent writes the tests for you.
+→ Show them the `.feature` file or the HTML visualizations. They can actually understand it. When they describe new behaviors, the agent writes the specs for you.
 
 ---
 
@@ -312,18 +299,12 @@ Customer clicks cancel
   → access removed
   → email: "Your subscription has ended"
 
-Currently: ✗ Failing
-Access is removed immediately on cancellation.
-
-Gap: System not checking billing_period_end before revoking access.
+Edge: What if customer is in a free trial?
+  → End access immediately
+  → Show "Your trial has been cancelled"
 ```
 
-**You say:**
-> Fix it.
-
-**Agent:**
-> [Does the implementation work behind the scenes]
-> This behavior is now passing ✓
+**Agent saved this to `docs/goodboy/behaviors/subscription-cancellation.feature`.**
 
 ---
 
@@ -344,8 +325,9 @@ User clicks "Forgot password"
   → enters new password
   → "Password updated, you can now log in"
 
-Currently: ✓ Passing (all steps verified)
 ```
+
+**Agent saved this to `docs/goodboy/behaviors/password-reset.feature`.**
 
 ---
 
@@ -397,6 +379,7 @@ Enable with: `> Switch to developer mode` during your session.
 - [x] Markdown auto-translate (behavioral translation of docs with code)
 
 ### v0.2 (Next)
+- [ ] Automated test execution ([Behave](https://behave.readthedocs.io/), [Cucumber](https://cucumber.io/)) against `.feature` specs
 - [ ] Multi-feature reconciliation
 - [ ] Behavioral conflict detection
 
@@ -432,17 +415,17 @@ If the agent can't express something behaviorally, either:
 
 Either way, forcing behavioral language catches problems earlier.
 
-### You're Writing Tests Without Knowing It
+### You're Writing Specs Without Knowing It
 
-Every time you say "when X happens, the user should see Y" — that's a test.
+Every time you say "when X happens, the user should see Y" — that's a spec.
 
 The agent:
 - Understands what you mean
-- Generates the test code
-- Runs it against your system  
-- Tells you if it passes
+- Maps it to a complete behavioral flow
+- Saves it as a `.feature` file
+- Builds your specification over time
 
-**You get test coverage without writing tests.** That's the dream.
+**You get full behavioral documentation without writing docs.** That's the dream.
 
 ---
 
@@ -480,8 +463,8 @@ A: Nope. That's the entire point.
 **Q: What if I want to see the code sometimes?**  
 A: Enable hybrid mode. Or just ask "show me the technical details" and the agent will explain (still in plain language).
 
-**Q: Does this work with my existing test suite?**  
-A: Yes. The .feature files can run alongside your existing tests. We generate Gherkin-compatible step definitions.
+**Q: Can I run the .feature files as tests?**
+A: Not yet — that's on the v0.2 roadmap. For now, the `.feature` files are behavioral specs that document what your system should do. They're Gherkin-compatible, so when test execution lands, they'll work with Behave, Cucumber, or similar frameworks.
 
 **Q: What about complex technical behaviors like "optimize database queries"?**  
 A: The agent will find the user-visible behavior: "search results should return in under 1 second" and work backwards. If there's no user-visible outcome, it's probably not a behavior — it's an implementation detail.

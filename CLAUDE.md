@@ -18,7 +18,7 @@ Python tests: `python3 tests/test_enforce_behavioral.py`
 - Exit code 0 = allow, exit code 2 = deny (for PreToolUse hooks)
 - `.claude-plugin/plugin.json` is the plugin manifest (source of truth)
 - Behavioral language only in user-facing output
-- Gherkin .feature files go in `docs/behaviors/`
+- Gherkin .feature files go in `docs/goodboy/behaviors/`
 
 ## Development
 - Test locally with: `claude --plugin-dir .`

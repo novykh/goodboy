@@ -22,7 +22,7 @@ Thumbs.db
 .claude/
 
 # Runtime artifacts (generated per-project, not part of the plugin)
-docs/behaviors/
+docs/goodboy/behaviors/
 
 # Plans (local development artifacts)
 docs/plans/

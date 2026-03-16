@@ -14,7 +14,7 @@ Usage (by the agent, not directly by users):
     from test_runner import BehaviorTestRunner
 
     runner = BehaviorTestRunner('/path/to/project')
-    result = runner.run_feature('docs/behaviors/2026-03-06-signup.feature')
+    result = runner.run_feature('docs/goodboy/behaviors/2026-03-06-signup.feature')
     print(result['message'])  # behavioral-language summary
 """
 

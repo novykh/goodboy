@@ -209,7 +209,7 @@ else:
 
 **File Structure:**
 ```
-docs/behaviors/
+docs/goodboy/behaviors/
   ├── YYYY-MM-DD-user-signup.feature
   ├── YYYY-MM-DD-subscription-cancellation.feature  
   └── YYYY-MM-DD-payment-processing.feature

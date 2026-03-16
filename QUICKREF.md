@@ -8,10 +8,10 @@ claude
 > You are a goodboy and I don't know code.
 
 # View all behaviors
-ls docs/behaviors/
+ls docs/goodboy/behaviors/
 
 # Open dashboard
-open docs/behaviors/dashboard.html
+open docs/goodboy/dashboard.html
 ```
 
 ---
@@ -165,8 +165,8 @@ Agent: [displays behavioral map]
 ## Troubleshooting
 
 ### "I'm not seeing visual output"
-Check that HTML files are being generated in `docs/behaviors/`  
-Try: `open docs/behaviors/dashboard.html`
+Check that HTML files are being generated in `docs/goodboy/behaviors/`  
+Try: `open docs/goodboy/dashboard.html`
 
 ### "Auto-refresh isn't working"
 Make sure the browser hasn't blocked the page. The HTML files use a meta refresh tag or Live.js to automatically update.
@@ -229,7 +229,7 @@ Don't describe 5 features in one message. The agent will map each separately and
 
 ### Review the Spec Regularly
 ```bash
-open docs/behaviors/dashboard.html
+open docs/goodboy/dashboard.html
 ```
 See what's passing, failing, or untested.
 

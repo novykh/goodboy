@@ -16,7 +16,7 @@ Usage (by the agent, not directly by users):
     viz = BehaviorVisualizer('/path/to/project')
     viz.generate_flow_diagram('Cancellation', mermaid_code, '/tmp/flow.html')
     viz.generate_comparison('Cancellation', expected, actual, gap, '/tmp/cmp.html')
-    viz.generate_dashboard()  # writes to docs/behaviors/dashboard.html
+    viz.generate_dashboard()  # writes to docs/goodboy/dashboard.html
 """
 
 from __future__ import annotations
