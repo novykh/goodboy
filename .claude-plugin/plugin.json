@@ -11,9 +11,6 @@
   "license": "MIT",
   "keywords": ["behavior", "bdd", "non-technical", "behavioral-mapping", "accessibility", "gherkin"],
   "skills": "./skills/",
-  "agents": "./agents/",
-  "commands": "./commands/",
-  "hooks": "./hooks/hooks.json",
   "settings": {
     "goodboy.mode": "strict",
     "goodboy.autoActivate": false,
