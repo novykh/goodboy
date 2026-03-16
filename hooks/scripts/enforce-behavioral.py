@@ -26,6 +26,17 @@ def is_markdown_file(tool_input: dict) -> bool:
     return file_path.lower().endswith('.md')
 
 
+def is_feature_file(tool_input: dict) -> bool:
+    file_path = tool_input.get('file_path', '')
+    return file_path.lower().endswith('.feature')
+
+
+def is_valid_gherkin(content: str) -> bool:
+    has_feature = bool(re.search(r'^Feature:', content, re.MULTILINE))
+    has_scenario = bool(re.search(r'^\s+Scenario:', content, re.MULTILINE))
+    return has_feature and has_scenario
+
+
 def contains_code(content: str) -> bool:
     """Detect if content has code-like patterns."""
     patterns = [
@@ -69,6 +80,23 @@ def main() -> None:
 
     if tool_name in ('Write', 'Edit', 'MultiEdit'):
         content = tool_input.get('content', '') or tool_input.get('new_string', '')
+
+        if is_feature_file(tool_input):
+            if not is_valid_gherkin(content):
+                result = {
+                    "hookSpecificOutput": {
+                        "permissionDecision": "deny"
+                    },
+                    "systemMessage": (
+                        "This .feature file is missing required Gherkin structure. "
+                        "It must have a 'Feature:' line and at least one 'Scenario:' "
+                        "with Given/When/Then steps. Fix the format and try again."
+                    )
+                }
+                print(json.dumps(result))
+                sys.exit(2)
+            print(json.dumps({}))
+            sys.exit(0)
 
         if contains_code(content) and not is_behavioral(content):
             if is_markdown_file(tool_input):

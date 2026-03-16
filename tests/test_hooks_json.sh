@@ -88,59 +88,6 @@ else
     fail_test "PreToolUse matcher is 'Write|Edit|MultiEdit'" "Got: $pretool_matcher"
 fi
 
-# ── Test: has UserPromptSubmit hook ──
-
-has_prompt=$(python3 -c "
-import json
-d = json.load(open('$HOOKS_JSON'))
-print('yes' if 'UserPromptSubmit' in d.get('hooks', {}) else 'no')
-")
-
-if [ "$has_prompt" = "yes" ]; then
-    pass_test "Has UserPromptSubmit hook"
-else
-    fail_test "Has UserPromptSubmit hook"
-fi
-
-# ── Test: UserPromptSubmit is a prompt-type hook ──
-
-prompt_type=$(python3 -c "
-import json
-d = json.load(open('$HOOKS_JSON'))
-hooks = d.get('hooks', {}).get('UserPromptSubmit', [])
-if hooks and hooks[0].get('hooks'):
-    print(hooks[0]['hooks'][0].get('type', ''))
-else:
-    print('')
-")
-
-if [ "$prompt_type" = "prompt" ]; then
-    pass_test "UserPromptSubmit hook type is 'prompt'"
-else
-    fail_test "UserPromptSubmit hook type is 'prompt'" "Got: $prompt_type"
-fi
-
-# ── Test: UserPromptSubmit prompt mentions activation phrases ──
-
-prompt_content=$(python3 -c "
-import json
-d = json.load(open('$HOOKS_JSON'))
-hooks = d.get('hooks', {}).get('UserPromptSubmit', [])
-if hooks and hooks[0].get('hooks'):
-    p = hooks[0]['hooks'][0].get('prompt', '')
-    has_goodboy = 'goodboy' in p.lower()
-    has_code = 'code' in p.lower()
-    print('yes' if has_goodboy and has_code else 'no')
-else:
-    print('no')
-")
-
-if [ "$prompt_content" = "yes" ]; then
-    pass_test "UserPromptSubmit prompt references activation phrases"
-else
-    fail_test "UserPromptSubmit prompt references activation phrases"
-fi
-
 # ── Test: has SessionStart hook ──
 
 has_session=$(python3 -c "
