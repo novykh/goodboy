@@ -1,6 +1,26 @@
-# Word-Flow Patterns
+# Behavioral Visualization Patterns
 
-Reference patterns for expressing software behavior as plain-language flow diagrams.
+Reference patterns for expressing software behavior visually in the CLI. The agent picks the right format based on what it's describing. Only use visuals when the behavior is complex enough to warrant one — simple behaviors are better as plain text.
+
+## Choosing the Right Format
+
+| What you're describing | Use this format |
+|----------------------|----------------|
+| Multi-step journey (signup, checkout) | **Flow** |
+| Yes/no branching on a condition | **Decision Flow** |
+| Rules with many branches (pricing, permissions) | **Tree** |
+| Lifecycle with named states (order, subscription) | **State Diagram** |
+| Before/after or plan comparison | **Table** |
+| Conversion drop-off (visitors → signups → paid) | **Funnel** |
+| Scheduled events over time (email sequences) | **Timeline** |
+| Steps in strict order | **Sequential Flow** |
+| Things happening at the same time | **Parallel Flow** |
+| Repeated action until condition met | **Loop Flow** |
+| Unexpected conditions | **Edge Case Flow** |
+| Delayed outcomes | **Timed Flow** |
+| Nested multi-factor decisions | **Conditional Chain** |
+
+You can combine formats in a single response. "Here's the pricing tree, and here's the upgrade flow between tiers."
 
 ## Basic Flow
 
@@ -189,4 +209,147 @@ Tracks how something changes over time.
   → [Delivered] → moves to [Complete]
   → [Customer requests return] → moves to [Return Pending]
   → [Return received] → moves to [Refunded]
+```
+
+## Tree
+
+```
+[Root]
+├── [Branch A]
+│   ├── [Detail]
+│   └── [Detail]
+├── [Branch B]
+│   ├── [Detail]
+│   └── [Detail]
+└── [Branch C] — MISSING
+    └── (needs definition)
+```
+
+Shows hierarchical rules, categories, or feature breakdowns. Use when there are multiple branches at the same level, each with their own sub-items.
+
+**Example:**
+```
+Pricing
+├── Free
+│   ├── 1 project
+│   └── Basic features
+├── Pro ($29/mo)
+│   ├── Unlimited projects
+│   ├── Priority support
+│   └── Advanced analytics
+├── Team ($99/mo)
+│   ├── Everything in Pro
+│   ├── 10 seats included
+│   └── Admin controls
+└── Enterprise — MISSING
+    └── No pricing or features defined
+```
+
+## Table
+
+```
+┌──────────────┬──────────────┐
+│ [Column A]   │ [Column B]   │
+├──────────────┼──────────────┤
+│ [value]      │ [value]      │
+│ [value]      │ [value]      │
+└──────────────┴──────────────┘
+```
+
+Shows side-by-side comparisons. Use for before/after, expected vs actual, plan comparisons, or feature matrices.
+
+**Example:**
+```
+┌──────────────────────┬──────────────────────┐
+│ Before               │ After                │
+├──────────────────────┼──────────────────────┤
+│ Cancel removes       │ Cancel preserves     │
+│ access immediately   │ access until period  │
+│                      │ ends                 │
+├──────────────────────┼──────────────────────┤
+│ No confirmation      │ "Are you sure?"      │
+│ prompt               │ prompt shown         │
+├──────────────────────┼──────────────────────┤
+│ No email sent        │ Confirmation email   │
+│                      │ sent on cancellation │
+└──────────────────────┴──────────────────────┘
+```
+
+## Funnel
+
+```
+[Stage 1]           ████████████████████  100%
+  ↓
+[Stage 2]           ████████████          60%
+  ↓
+[Stage 3]           ██████                30%
+  ↓
+[Stage 4]           ███                   15%
+```
+
+Shows conversion or drop-off across stages. Use when describing user journeys where volume decreases at each step.
+
+**Example:**
+```
+Visit homepage      ████████████████████  100% of visitors
+  ↓
+Click "Sign Up"     ████████████          58%
+  ↓
+Complete form       ██████                31%
+  ↓
+Verify email        ████                  22%
+  ↓
+First project       ██                    12%
+```
+
+## Timeline
+
+```
+[Time/Date]  ── [Event]
+     │
+[Time/Date]  ── [Event]
+     │
+[Time/Date]  ── [Event]
+```
+
+Shows events in chronological order. Use for email sequences, billing cycles, scheduled actions, or any time-ordered behavior.
+
+**Example:**
+```
+Day 0   ── Customer signs up
+  │        Welcome email sent immediately
+  │
+Day 1   ── "Getting started" email
+  │
+Day 3   ── "Did you try feature X?" email
+  │
+Day 7   ── Trial halfway reminder
+  │        "You have 7 days left"
+  │
+Day 13  ── Trial ending warning
+  │        "Your trial ends tomorrow"
+  │
+Day 14  ── Trial expires
+           Access restricted to free tier
+```
+
+## State Diagram (Compact)
+
+```
+(State A) ──event──→ (State B) ──event──→ (State C)
+                        │                      │
+                      event                  event
+                        ↓                      ↓
+                   (State D) ──event──→ (State E)
+```
+
+A more compact version of state transitions. Use when states have multiple possible transitions and you want to show the full map at a glance.
+
+**Example:**
+```
+(Trial) ──expires──→ (Active) ──cancels──→ (Cancelling)
+                        │                      │
+                  payment fails          period ends
+                        ↓                      ↓
+                   (Past Due) ──3 retries──→ (Churned)
 ```

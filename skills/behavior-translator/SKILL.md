@@ -107,9 +107,20 @@ digraph behavior_translator {
 
 → Extract behavior: "When someone enters an invalid email during signup, they see a message explaining what's wrong." Ignore React/Tailwind (implementation choices).
 
-## Word-Flow Diagram Format
+## Visualization
 
-Present behavioral maps as plain-text word-flow diagrams:
+Present behavioral maps using the right visual format for what you're describing. See `references/word-flow-patterns.md` for the full toolkit with examples. Pick the format that best fits:
+
+- **Flows** for journeys (signup, checkout)
+- **Trees** for hierarchical rules (pricing, permissions)
+- **State diagrams** for lifecycles (subscriptions, orders)
+- **Tables** for comparisons (before/after, expected vs actual)
+- **Funnels** for conversion drop-off
+- **Timelines** for scheduled events (email sequences)
+
+Only use visuals when complexity warrants it. Simple behaviors are better as plain text. You can combine formats in one response.
+
+### Basic Flow Example
 
 ```
 [Trigger Event]
