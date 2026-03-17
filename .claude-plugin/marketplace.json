@@ -9,7 +9,7 @@
       "name": "goodboy",
       "source": "./",
       "description": "Behavior-first Claude Code plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "Johnny Klironomos",
         "url": "https://github.com/novykh"

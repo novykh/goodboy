@@ -1,6 +1,6 @@
 {
   "name": "goodboy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Behavior-first Claude Code plugin — makes AI agents accessible to non-technical users through mandatory behavioral verification",
   "author": {
     "name": "Johnny Klironomos",

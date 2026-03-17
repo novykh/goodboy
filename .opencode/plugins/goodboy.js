@@ -49,7 +49,7 @@ export default async function GoodboyPlugin() {
 
   return {
     name: "goodboy",
-    version: "0.1.0",
+    version: "0.2.0",
     experimental: {
       chat: {
         system: {

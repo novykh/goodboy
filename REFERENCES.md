@@ -4,7 +4,7 @@
 
 **Name:** goodboy 🐕  
 **Tagline:** Talk to AI agents about behavior, not code  
-**Status:** v0.1.0 — MVP  
+**Status:** v0.2.0  
 **License:** MIT
 
 ---

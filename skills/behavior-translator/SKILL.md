@@ -1,7 +1,7 @@
 ---
 name: behavior-translator
 description: "You MUST use this for ALL responses in behavior-first mode — translates everything into behavioral language, blocks code output, generates visual word-flow diagrams, and accumulates confirmed behaviors as Gherkin .feature files"
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Behavior Translator

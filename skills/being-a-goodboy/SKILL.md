@@ -1,7 +1,7 @@
 ---
 name: being-a-goodboy
 description: Use when starting any conversation — establishes behavior-first mode, activation detection, skill invocation rules, and session management for non-technical users
-version: 0.1.0
+version: 0.2.0
 user-invocable: true
 ---
 
