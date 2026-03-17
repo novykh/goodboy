@@ -1,5 +1,5 @@
 ---
-name: goodboy-dashboard
+name: dashboard
 description: Open the behavioral spec dashboard in the browser
 ---
 

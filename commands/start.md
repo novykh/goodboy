@@ -1,5 +1,5 @@
 ---
-name: goodboy-activate
+name: start
 description: Activate behavior-first mode for this session
 ---
 

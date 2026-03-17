@@ -1,5 +1,5 @@
 ---
-name: goodboy-status
+name: status
 description: Show the status of all behavioral specs
 ---
 
