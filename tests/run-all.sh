@@ -73,6 +73,9 @@ run_suite "test_runner.py (Python unit tests)" \
 run_suite "visualizer.py (Python unit tests)" \
     "python3 '${SCRIPT_DIR}/test_visualizer.py'"
 
+run_suite "hooks (Python unit tests)" \
+    "python3 '${SCRIPT_DIR}/test_hooks.py'"
+
 # ── Final summary ──
 
 TOTAL=$((SUITES_PASS + SUITES_FAIL))
