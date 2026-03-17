@@ -25,8 +25,8 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    ACCUMULATION LAYER                        │
 │  .feature files grow with confirmed behaviors               │
-│  Gherkin generation + step definitions (hidden from user)   │
-│  Test execution (Cucumber/Behave/etc)                       │
+│  .feature specs saved via Write tool                        │
+│  Test execution planned for v0.2 (Cucumber/Behave)          │
 └─────────────────────────────────────────────────────────────┘
                               ↕
 ┌─────────────────────────────────────────────────────────────┐
@@ -491,7 +491,7 @@ This behavior has been failing since [timestamp]. Want me to fix it?"
 goodboy/                             # Claude Code plugin root
 ├── plugin.json                      # Plugin manifest
 ├── hooks/
-│   ├── hooks.json                   # Hook registration (PreToolUse, SessionStart, UserPromptSubmit)
+│   ├── hooks.json                   # Hook registration (PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, Stop, SubagentStop, PreCompact)
 │   ├── run-hook.cmd                 # Cross-platform polyglot wrapper (Windows batch + bash)
 │   ├── session-start                # SessionStart: load being-a-goodboy context, detect .behavior-first-mode
 │   └── scripts/

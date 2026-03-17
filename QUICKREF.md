@@ -136,8 +136,8 @@ Agent: [maps behavior, asks clarifying questions]
 You: [clarifies edge cases]
 Agent: [updates map, asks for confirmation]
 You: "Yes, that's right"
-Agent: [saves to .feature file, runs tests]
-Agent: "This behavior is currently failing. Want me to fix it?"
+Agent: [saves to .feature file]
+Agent: "This behavior has been captured and saved."
 ```
 
 ### 2. Debugging an Issue  
@@ -147,8 +147,8 @@ Agent: [checks behavioral spec]
 Agent: "Expected: email within 5 min. Actual: no email sent."
 Agent: "Gap: messages stuck in queue. Want me to fix it?"
 You: "Yes"
-Agent: [fixes, retests]
-Agent: "This behavior is now passing ✓"
+Agent: [implements fix]
+Agent: "The fix is in place. The behavioral spec is saved."
 ```
 
 ### 3. Exploring System  
@@ -181,16 +181,6 @@ Make sure to re-start the conversation with `> You are a goodboy and I don't kno
 ### "Behavioral maps seem incomplete"
 The agent should ask clarifying questions. If it doesn't:  
 Say: "What about edge cases?" or "What if [condition]?"
-
-### "Tests aren't running"
-Check that test framework is installed:
-```bash
-# For Python projects
-pip install behave
-
-# For JavaScript projects  
-npm install --save-dev @cucumber/cucumber
-```
 
 ---
 
