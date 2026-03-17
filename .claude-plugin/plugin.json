@@ -10,11 +10,5 @@
   "repository": "https://github.com/novykh/goodboy",
   "license": "MIT",
   "keywords": ["behavior", "bdd", "non-technical", "behavioral-mapping", "accessibility", "gherkin"],
-  "skills": "./skills/",
-  "settings": {
-    "goodboy.mode": "strict",
-    "goodboy.autoActivate": false,
-    "goodboy.visualOutput": true,
-    "goodboy.featureFileDir": "docs/goodboy/behaviors"
-  }
+  "skills": "./skills/"
 }

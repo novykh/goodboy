@@ -1,6 +1,1 @@
-{
-  "goodboy.mode": "strict",
-  "goodboy.autoActivate": false,
-  "goodboy.visualOutput": true,
-  "goodboy.featureFileDir": "docs/goodboy/behaviors"
-}
+{}
